@@ -8,13 +8,13 @@ import { RegisterUserDto } from './dtos/auth.dto'
 export class AuthService {
   constructor (@InjectModel(User.name) private userModel: Model<User>) {}
 
-  // -------- Signup --------  
+  // -------- Signup --------
   async registerUser (userData: RegisterUserDto) {
     const existUser = await this.userModel.findOne({ email: userData.email })
-    if(existUser) {
+    if (existUser) {
       throw new BadRequestException('User already exists')
     }
     const user = await this.userModel.create(userData)
-    return user
+    return { user, message: 'User created successfully' }
   }
 }

@@ -8,6 +8,7 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() userData: RegisterUserDto) {
-    return await this.authService.registerUser(userData)
+    const res_Obj = await this.authService.registerUser(userData)
+    return res_Obj
   }
 }
