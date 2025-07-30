@@ -1,24 +1,59 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router'
-import './index.css'
+import { Navigate, Route, Router, Routes } from 'react-router-dom'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { CreateBlogPage } from './pages/CreateBlogPage'
 import { ErrorPage } from './pages/ErrorPage'
+import { Header } from './components/Header'
+import { BlogPage } from './pages/BlogPage'
+import MainContextProvider, { useMainContext } from './context/maincontext'
+import type { ReactNode } from 'react'
 
 function App() {
+	// Wrapper for protecting routes (redirect if not logged in)
+	const RequireAuth = ({ children }: { children: ReactNode }) => {
+		const { user } = useMainContext()
+		if (!user) {
+			return <Navigate to="/login" replace />
+		}
+		return <>{children}</>
+	}
+
+	// Wrapper for redirecting logged-in users away from auth pages
+	const RedirectIfAuthenticated = ({ children }: { children: ReactNode }) => {
+		const { user } = useMainContext()
+		if (user) {
+			return <Navigate to="/" replace />
+		}
+		return <>{children}</>
+	}
 
 	return (
 		<>
-			<Router>
+			<MainContextProvider>
+				<Header />
 				<Routes>
 					<Route path="/" element={<HomePage />} />
-					<Route path="/login" element={<LoginPage />} />
+					<Route
+						path="/login"
+						element={
+							<RedirectIfAuthenticated>
+								<LoginPage />
+							</RedirectIfAuthenticated>
+						} />
+
+
+					<Route path="/create-blog" element={
+						<RequireAuth>
+							<CreateBlogPage />
+						</RequireAuth>
+					} />
+
 					<Route path="/register" element={<RegisterPage />} />
-					<Route path="/create-blog" element={<CreateBlogPage />} />
+					<Route path="/blog" element={<BlogPage />} />
 					<Route path="*" element={<ErrorPage />} />
 				</Routes>
-			</Router>
+			</MainContextProvider>
 		</>
 	)
 }
