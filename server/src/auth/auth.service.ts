@@ -47,4 +47,9 @@ export class AuthService {
     )
     return { accessToken }
   }
+
+  async findUserById (userId) {
+    const user = await this.userModel.findById(userId)
+    return user
+  }
 }

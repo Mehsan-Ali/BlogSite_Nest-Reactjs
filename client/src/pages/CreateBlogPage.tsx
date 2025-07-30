@@ -12,7 +12,7 @@ type FormValues = {
 }
 export const CreateBlogPage = () => {
 	const [loading, setLoading] = useState(false)
-	const initialValues : FormValues = {
+	const initialValues: FormValues = {
 		title: '',
 		content: '',
 		tags: [''],
@@ -27,6 +27,7 @@ export const CreateBlogPage = () => {
 
 	const onSubmitHandler = async (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
 		try {
+			// const resp = awa
 			toast.success('User created successfully')
 			console.log(values)
 			resetForm()
@@ -39,7 +40,7 @@ export const CreateBlogPage = () => {
 			<div className='py-10 mx-auto'>
 				<div className="mb-3">
 					<h1 className='text-3xl lg:text-4xl font-bold text-center'>Hi, Your Name <span className="wave">👋</span>
-</h1>
+					</h1>
 				</div>
 				<Formik initialValues={initialValues} validationSchema={validateSchema} onSubmit={onSubmitHandler}>
 					{({ handleSubmit, values, setFieldValue }) => (

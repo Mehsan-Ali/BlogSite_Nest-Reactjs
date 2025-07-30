@@ -32,7 +32,7 @@ export const LoginPage = () => {
             const resp = await axiosClient.post('/auth/login', values)
             const { accessToken } = resp.data.token
             const userData = resp.data.userData
-            localStorage.setItem('accessToken', accessToken)
+            localStorage.setItem('token', accessToken)
             localStorage.setItem('userData', JSON.stringify(resp.data.userData))
             setUser(userData)
             toast.success(resp?.data?.message || 'User logged in successfully')

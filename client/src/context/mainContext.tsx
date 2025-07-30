@@ -1,7 +1,8 @@
 // MainContextProvider.tsx
-import React, { createContext, useContext, useState, type ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { axiosClient } from '../utils/AxiosClient';
 
 interface UserType {
   _id: string;
@@ -38,7 +39,22 @@ const MainContextProvider: React.FC<Props> = ({ children }) => {
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
-
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token") || ''
+      if (!token) return
+      const response = await axiosClient.get("/auth/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      const data = await response.data;
+      setUser(data)
+      console.log(data)
+    } catch (error) {
+      navigate("/login")
+    }
+  }
   const LogoutHandler = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('userData')
@@ -46,7 +62,9 @@ const MainContextProvider: React.FC<Props> = ({ children }) => {
     navigate('/login')
     toast.success('Logged out successfully')
   }
-
+  useEffect(() => {
+    fetchProfile()
+  }, [])
   return (
     <MainContext.Provider value={{ user, setUser, loading, setLoading, LogoutHandler }}>
       {children}
