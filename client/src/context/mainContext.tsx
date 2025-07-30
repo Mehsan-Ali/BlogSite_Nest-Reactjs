@@ -1,39 +1,54 @@
+// MainContextProvider.tsx
 import React, { createContext, useContext, useState, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom' // use `react-router-dom` in web apps
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-// Define the shape of your context
-interface MainContextType {
-  user: null
-  LogoutHandler: () => void
+interface UserType {
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Provide default value for the context
+interface MainContextType {
+  user: UserType | null;
+  setUser: (user: UserType | null) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+  LogoutHandler: () => void;
+}
+
 const MainContext = createContext<MainContextType>({
   user: null,
-  LogoutHandler: () => {},
+  setUser: () => { },
+  loading: false,
+  setLoading: () => { },
+  LogoutHandler: () => { },
 })
 
-// Custom hook for easier consumption
 export const useMainContext = () => useContext(MainContext)
 
-// Define props type for the provider
 interface Props {
   children: ReactNode
 }
 
 const MainContextProvider: React.FC<Props> = ({ children }) => {
-  const [user, setUser] = useState<any>(null) // Replace `any` with a real user type if available
+  const [user, setUser] = useState<UserType | null>(null)
+  const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate()
 
   const LogoutHandler = () => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('userData')
     setUser(null)
     navigate('/login')
-    toast.success('Logout successfully')
+    toast.success('Logged out successfully')
   }
 
   return (
-    <MainContext.Provider value={{ user, LogoutHandler }}>
+    <MainContext.Provider value={{ user, setUser, loading, setLoading, LogoutHandler }}>
       {children}
     </MainContext.Provider>
   )

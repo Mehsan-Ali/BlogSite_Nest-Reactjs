@@ -1,30 +1,48 @@
-import React, { useState } from 'react'
-import { Formik, Form, ErrorMessage, Field } from 'formik'
+import { useState } from 'react'
+import { Formik, Form, ErrorMessage, Field, type FormikHelpers } from 'formik'
 import { EyeClosed, EyeIcon } from 'lucide-react'
 import { AuthButton } from '../components/AuthButton'
 import { toast } from 'react-toastify'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
-
+import { axiosClient } from '../utils/AxiosClient'
+import { useMainContext } from '../context/mainContext'
+type FormValues = {
+    email: string
+    password: string
+}
 export const LoginPage = () => {
+    const { setUser } = useMainContext()
+    const navg = useNavigate()
     const [isHide, setIsHide] = useState(true)
     const [loading, setLoading] = useState(false)
     const validationSchema = yup.object({
         email: yup.string().email('Invalid email').required('Email is required'),
         password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
     })
-    
-    const initialValues = {
+
+    const initialValues: FormValues = {
         email: '',
         password: '',
     }
 
-    const onSubmitHandler = async (values, helpers) => {
+    const onSubmitHandler = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
         try {
-            toast.success('User created successfully')
+            setLoading(true)
+            const resp = await axiosClient.post('/auth/login', values)
+            const { accessToken } = resp.data.token
+            const userData = resp.data.userData
+            localStorage.setItem('accessToken', accessToken)
+            localStorage.setItem('userData', JSON.stringify(resp.data.userData))
+            setUser(userData)
+            toast.success(resp?.data?.message || 'User logged in successfully')
+            navg('/')
             helpers.resetForm()
         } catch (error: any) {
-            toast.error(error?.data?.message)
+            console.log(error?.response?.data?.message || "Error in Login")
+            toast.error(error?.response?.data?.message || "Error in Login")
+        } finally {
+            setLoading(false)
         }
     }
     return (

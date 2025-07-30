@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, ChevronsRight, LoaderCircle } from 'lucide-react'
+import { ArrowRight, LoaderCircle } from 'lucide-react'
 import React from 'react'
 
 export const AuthButton = ({ loading, text, className, ...props }: any) => {

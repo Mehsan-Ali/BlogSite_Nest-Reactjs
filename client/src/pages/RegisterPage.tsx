@@ -1,12 +1,21 @@
 import React, { useState } from 'react'
 import * as yup from 'yup'
-import { Formik, Form, ErrorMessage, Field } from 'formik'
+import { Formik, Form, ErrorMessage, Field, type FormikHelpers } from 'formik'
 import { EyeClosed, EyeIcon } from 'lucide-react'
 import { AuthButton } from '../components/AuthButton'
 import { toast } from 'react-toastify'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { axiosClient } from '../utils/AxiosClient'
+import { useMainContext } from '../context/mainContext'
+
+type FormValues = {
+	name: string
+	email: string
+	password: string
+}
 
 export const RegisterPage = () => {
+	const navg = useNavigate()
 	const [isHide, setIsHide] = useState(true)
 	const [loading, setLoading] = useState(false)
 	const validationSchema = yup.object({
@@ -14,17 +23,21 @@ export const RegisterPage = () => {
 		email: yup.string().email('Invalid email').required('Email is required'),
 		password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 	})
-	const initialValues = {
+	const initialValues: FormValues = {
 		name: '',
 		email: '',
 		password: '',
 	}
 
-	const onSubmitHandler = async (values, helpers) => {
+	const onSubmitHandler = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
 		try {
-			toast.success('User created successfully')
+			const resp = await axiosClient.post('/auth/signup', values)
+			const user = resp.data
+			toast.success(user?.message || 'User created successfully')
+			navg('/login')
 			helpers.resetForm()
 		} catch (error: any) {
+			console.log(error)
 			toast.error(error?.data?.message)
 		}
 	}
