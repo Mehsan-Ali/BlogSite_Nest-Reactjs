@@ -15,6 +15,7 @@ interface UserType {
 interface MainContextType {
   user: UserType | null;
   loading: boolean;
+  setUser: (user: UserType | null) => void;
   blogs: Array<any> | null;
   fetchBlogs: () => void;
   setLoading: (loading: boolean) => void;
@@ -24,6 +25,7 @@ interface MainContextType {
 const MainContext = createContext<MainContextType>({
   user: null,
   blogs: null,
+  setUser: () => { },
   loading: false,
   fetchBlogs: () => { },
   setLoading: () => { },
@@ -69,7 +71,7 @@ const MainContextProvider: React.FC<Props> = ({ children }) => {
     }
   }
   const LogoutHandler = () => {
-    localStorage.removeItem('accessToken')
+    localStorage.removeItem('token')
     localStorage.removeItem('userData')
     setUser(null)
     navigate('/login')
@@ -80,7 +82,7 @@ const MainContextProvider: React.FC<Props> = ({ children }) => {
     fetchProfile()
   }, [])
   return (
-    <MainContext.Provider value={{ user, loading, setLoading, LogoutHandler, fetchBlogs, blogs }}>
+    <MainContext.Provider value={{ user, setUser,loading, setLoading, LogoutHandler, fetchBlogs, blogs }}>
       {children}
     </MainContext.Provider>
   )

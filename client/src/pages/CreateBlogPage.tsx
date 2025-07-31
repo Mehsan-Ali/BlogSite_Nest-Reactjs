@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import Editor from '../components/Editor'
 import { AuthButton } from '../components/AuthButton'
+import { axiosClient } from '../utils/AxiosClient'
+import { ReplyAll } from 'lucide-react'
 type FormValues = {
 	title: string;
 	content: string;
@@ -27,12 +29,18 @@ export const CreateBlogPage = () => {
 
 	const onSubmitHandler = async (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
 		try {
-			// const resp = awa
-			toast.success('User created successfully')
-			console.log(values)
+			const resp = await axiosClient.post('/blog/create', values, {
+				headers: {
+					'Authorization': `Bearer ${localStorage.getItem('token')}`
+				}
+			})
+			const data = resp.data
+			console.log(data)
+			toast.success(data.message || 'User created successfully')
 			resetForm()
 		} catch (error: any) {
 			toast.error(error?.data?.message)
+			console.log(error)
 		}
 	}
 	return (

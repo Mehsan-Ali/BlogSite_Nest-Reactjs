@@ -1,4 +1,3 @@
-import { useId } from 'react'
 import { Link } from 'react-router'
 
 export const BlogCard = ({ data }: { data: any }) => {

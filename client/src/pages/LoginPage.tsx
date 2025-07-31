@@ -39,7 +39,7 @@ export const LoginPage = () => {
             navg('/')
             helpers.resetForm()
         } catch (error: any) {
-            console.log(error?.response?.data?.message || "Error in Login")
+            console.log(error?.response?.data?.message || error)
             toast.error(error?.response?.data?.message || "Error in Login")
         } finally {
             setLoading(false)
@@ -75,7 +75,7 @@ export const LoginPage = () => {
                             <ErrorMessage name="password" component="div" className='text-red-500 text-xs mt-1' />
                         </div>
                         <div className='mb-3'>
-                            <AuthButton text='Register' loading={loading} className />
+                            <AuthButton text='Login' type='submit' loading={loading} className />
                         </div>
                         <div className='mb-3'>
                             <p className='text-end capitalize'>Don&apos;t have an account?
