@@ -13,7 +13,7 @@ export class BlogController {
     return await this.blogService.createBlog(req.userId, blogData)
   }
 
-  @Get('get')
+  @Get('get-blogs')
   async getAllBlogs () {
     const Blogs = await this.blogService.getAllBlogs()
     return Blogs

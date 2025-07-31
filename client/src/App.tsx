@@ -6,8 +6,8 @@ import { CreateBlogPage } from './pages/CreateBlogPage'
 import { ErrorPage } from './pages/ErrorPage'
 import { Header } from './components/Header'
 import { BlogPage } from './pages/BlogPage'
-import MainContextProvider, { useMainContext } from './context/maincontext'
 import type { ReactNode } from 'react'
+import MainContextProvider, { useMainContext } from './context/mainContext'
 
 function App() {
 	// Wrapper for protecting routes (redirect if not logged in)
@@ -50,7 +50,7 @@ function App() {
 					} />
 
 					<Route path="/register" element={<RegisterPage />} />
-					<Route path="/blog" element={<BlogPage />} />
+					<Route path="/blog/:slug" element={<BlogPage />} />
 					<Route path="*" element={<ErrorPage />} />
 				</Routes>
 			</MainContextProvider>

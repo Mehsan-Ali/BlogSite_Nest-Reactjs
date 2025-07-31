@@ -14,16 +14,18 @@ interface UserType {
 
 interface MainContextType {
   user: UserType | null;
-  setUser: (user: UserType | null) => void;
   loading: boolean;
+  blogs: Array<any> | null;
+  fetchBlogs: () => void;
   setLoading: (loading: boolean) => void;
   LogoutHandler: () => void;
 }
 
 const MainContext = createContext<MainContextType>({
   user: null,
-  setUser: () => { },
+  blogs: null,
   loading: false,
+  fetchBlogs: () => { },
   setLoading: () => { },
   LogoutHandler: () => { },
 })
@@ -36,6 +38,7 @@ interface Props {
 
 const MainContextProvider: React.FC<Props> = ({ children }) => {
   const [user, setUser] = useState<UserType | null>(null)
+  const [blogs, setBlogs] = useState<any | null>(null)
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
@@ -55,6 +58,16 @@ const MainContextProvider: React.FC<Props> = ({ children }) => {
       navigate("/login")
     }
   }
+  const fetchBlogs = async () => {
+    try {
+      const resp = await axiosClient.get('/blog/get-blogs')
+      const data = await resp.data
+      setBlogs(data.blogs)
+      console.log(data)
+    } catch (error: any) {
+      console.log(error)
+    }
+  }
   const LogoutHandler = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('userData')
@@ -63,10 +76,11 @@ const MainContextProvider: React.FC<Props> = ({ children }) => {
     toast.success('Logged out successfully')
   }
   useEffect(() => {
+    fetchBlogs()
     fetchProfile()
   }, [])
   return (
-    <MainContext.Provider value={{ user, setUser, loading, setLoading, LogoutHandler }}>
+    <MainContext.Provider value={{ user, loading, setLoading, LogoutHandler, fetchBlogs, blogs }}>
       {children}
     </MainContext.Provider>
   )
